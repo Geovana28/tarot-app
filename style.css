@@ -1921,3 +1921,181 @@ body {
     line-height: 1;
 }
 
+/* ==========================================================================
+   ORÁCULO DE IA (BOTÕES E MODAL DE INTERPRETAÇÃO PROFUNDA)
+   ========================================================================== */
+
+.btn-ai-toolbar {
+    background: linear-gradient(135deg, #5b21b6 0%, #3b0764 100%);
+    color: #ffd700;
+    border: 1.5px solid #ffd700;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
+}
+
+.btn-ai-toolbar:hover:not(:disabled) {
+    background: linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 0 18px rgba(212, 175, 55, 0.5);
+}
+
+.ai-oracle-cta-wrapper {
+    width: 100%;
+    max-width: 720px;
+    margin: 24px auto 8px auto;
+    display: flex;
+    justify-content: center;
+    animation: fadeInDown 0.4s ease;
+}
+
+.btn-ai-oracle-main {
+    width: 100%;
+    background: linear-gradient(135deg, #4c1d95 0%, #1e0b3b 100%);
+    border: 1.5px solid var(--gold-primary);
+    border-radius: 14px;
+    padding: 16px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 18px rgba(212, 175, 55, 0.25);
+    transition: var(--transition-smooth);
+}
+
+.btn-ai-oracle-main:hover {
+    transform: translateY(-3px) scale(1.01);
+    border-color: #ffd700;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.75), 0 0 25px rgba(255, 215, 0, 0.45);
+    background: linear-gradient(135deg, #5b21b6 0%, #2e1065 100%);
+}
+
+.ai-btn-title {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #ffd700;
+    letter-spacing: 0.5px;
+}
+
+.ai-btn-subtitle {
+    font-size: 0.85rem;
+    color: #e9d5ff;
+}
+
+.ai-modal-content {
+    max-width: 760px;
+    border: 1.5px solid #ffd700;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px;
+    background: rgba(28, 12, 54, 0.95);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.ai-modal-header h3 {
+    font-family: var(--font-serif);
+    color: #ffd700;
+    font-size: 1.35rem;
+    margin: 0;
+}
+
+.ai-modal-header .modal-close {
+    position: static;
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.ai-key-config {
+    padding: 10px 24px;
+    background: rgba(12, 6, 26, 0.75);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.ai-key-config summary {
+    cursor: pointer;
+    color: var(--gold-light);
+    font-weight: 500;
+    user-select: none;
+}
+
+.ai-key-input-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    align-items: center;
+}
+
+.ai-key-input-row .custom-input {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+}
+
+.ai-loading-box {
+    padding: 50px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.ai-spinner {
+    font-size: 3rem;
+    animation: pulseSpin 1.8s infinite ease-in-out;
+}
+
+@keyframes pulseSpin {
+    0% { transform: scale(0.95) rotate(0deg); filter: drop-shadow(0 0 6px #ffd700); }
+    50% { transform: scale(1.15) rotate(12deg); filter: drop-shadow(0 0 20px #a855f7); }
+    100% { transform: scale(0.95) rotate(0deg); filter: drop-shadow(0 0 6px #ffd700); }
+}
+
+.ai-loading-title {
+    color: #f3e8ff;
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.ai-loading-sub {
+    color: #a78bfa;
+    font-size: 0.9rem;
+}
+
+.ai-response-container {
+    padding: 24px;
+    overflow-y: auto;
+    max-height: 68vh;
+}
+
+.ai-reading-text {
+    color: #f3e8ff;
+    font-size: 0.98rem;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    background: rgba(14, 8, 30, 0.75);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-left: 4px solid #ffd700;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.ai-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+

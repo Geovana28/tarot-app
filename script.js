@@ -399,6 +399,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initTabs();
     initToolbar();
     initReadingActions();
+    initAIOracle();
     initJournal();
     initGlossary();
     initModal();
@@ -634,6 +635,12 @@ function drawCards() {
     document.getElementById("reading-panel").classList.add("hidden");
     document.getElementById("btn-reveal-all").removeAttribute("disabled");
 
+    const btnAiToolbar = document.getElementById("btn-consult-ai-toolbar");
+    if (btnAiToolbar) btnAiToolbar.removeAttribute("disabled");
+
+    const aiCtaWrapper = document.getElementById("ai-oracle-cta-wrapper");
+    if (aiCtaWrapper) aiCtaWrapper.classList.remove("hidden");
+
     // Copiar e embaralhar baralho (Fisher-Yates)
     const deck = [...tarotData];
     shuffleArray(deck);
@@ -833,7 +840,7 @@ function copyReadingSummary() {
     });
 }
 
-function saveCurrentToJournal() {
+function saveCurrentToJournal(customNotes = "") {
     if (currentDrawnCards.length === 0) return;
 
     const spreadType = document.getElementById("spread-select").value;
@@ -854,7 +861,7 @@ function saveCurrentToJournal() {
             keywords: d.card.keywords,
             meaning: d.isReversed ? d.card.reversed : d.card.upright
         })),
-        notes: ""
+        notes: typeof customNotes === "string" ? customNotes : ""
     };
 
     const entries = getJournalEntries();
@@ -865,6 +872,203 @@ function saveCurrentToJournal() {
     renderJournalList();
 
     showToast("Leitura salva no seu Diário Pessoal!", "💾");
+}
+
+// ==========================================
+// 6.5. ORÁCULO DE IA (INTERPRETAÇÃO PROFUNDA)
+// ==========================================
+
+let currentAIReadingText = "";
+
+function initAIOracle() {
+    const btnToolbar = document.getElementById("btn-consult-ai-toolbar");
+    const btnMain = document.getElementById("btn-consult-ai-main");
+    const modal = document.getElementById("ai-modal");
+    const btnClose = document.getElementById("btn-close-ai-modal");
+    const overlay = document.getElementById("ai-modal-overlay");
+    const btnCopyAI = document.getElementById("btn-copy-ai-reading");
+    const btnSaveAI = document.getElementById("btn-save-ai-journal");
+    const apiKeyInput = document.getElementById("gemini-api-key-input");
+    const btnSaveKey = document.getElementById("btn-save-api-key");
+
+    const savedKey = localStorage.getItem("tarot_gemini_api_key") || "";
+    if (apiKeyInput && savedKey) {
+        apiKeyInput.value = savedKey;
+    }
+
+    if (btnSaveKey && apiKeyInput) {
+        btnSaveKey.addEventListener("click", () => {
+            const keyVal = apiKeyInput.value.trim();
+            localStorage.setItem("tarot_gemini_api_key", keyVal);
+            showToast(keyVal ? "Chave Gemini salva no navegador!" : "Chave removida (usando Oráculo Local).", "🔑");
+        });
+    }
+
+    if (btnToolbar) btnToolbar.addEventListener("click", consultAIOracle);
+    if (btnMain) btnMain.addEventListener("click", consultAIOracle);
+
+    const closeAIModal = () => {
+        if (modal) modal.classList.add("hidden");
+    };
+
+    if (btnClose) btnClose.addEventListener("click", closeAIModal);
+    if (overlay) overlay.addEventListener("click", closeAIModal);
+
+    if (btnCopyAI) {
+        btnCopyAI.addEventListener("click", () => {
+            if (!currentAIReadingText) return;
+            navigator.clipboard.writeText(currentAIReadingText).then(() => {
+                showToast("Interpretação do Oráculo copiada!", "📋");
+            });
+        });
+    }
+
+    if (btnSaveAI) {
+        btnSaveAI.addEventListener("click", () => {
+            saveCurrentToJournal(currentAIReadingText);
+            closeAIModal();
+        });
+    }
+}
+
+async function consultAIOracle() {
+    if (currentDrawnCards.length === 0) {
+        showToast("Tire as cartas primeiro antes de consultar o Oráculo!", "🃏");
+        return;
+    }
+
+    // Revela todas as cartas automaticamente se alguma estiver virada
+    const hasUnrevealed = currentDrawnCards.some(d => !d.revealed);
+    if (hasUnrevealed) {
+        revealAllCards();
+    }
+
+    const modal = document.getElementById("ai-modal");
+    const loadingBox = document.getElementById("ai-loading-box");
+    const responseContainer = document.getElementById("ai-response-container");
+    const readingTextEl = document.getElementById("ai-reading-text");
+
+    if (modal) modal.classList.remove("hidden");
+    if (loadingBox) loadingBox.classList.remove("hidden");
+    if (responseContainer) responseContainer.classList.add("hidden");
+
+    const spreadType = document.getElementById("spread-select").value;
+    const spreadName = spreadsConfig[spreadType].name;
+    const questionInput = document.getElementById("question-input");
+    currentQuestion = questionInput ? questionInput.value.trim() : currentQuestion;
+
+    const apiKey = (localStorage.getItem("tarot_gemini_api_key") || "").trim();
+
+    try {
+        currentAIReadingText = await generateAIReading({
+            question: currentQuestion,
+            spreadName,
+            cards: currentDrawnCards,
+            apiKey
+        });
+    } catch (e) {
+        currentAIReadingText = generateLocalMysticOracleSynthesis(currentQuestion, spreadName, currentDrawnCards);
+    }
+
+    if (readingTextEl) readingTextEl.textContent = currentAIReadingText;
+    if (loadingBox) loadingBox.classList.add("hidden");
+    if (responseContainer) responseContainer.classList.remove("hidden");
+}
+
+async function generateAIReading({ question, spreadName, cards, apiKey }) {
+    if (apiKey && apiKey.length > 0) {
+        const cardsDescription = cards.map((d, i) => {
+            const orientation = d.isReversed ? "Invertida" : "Ereta (Normal)";
+            return `${i + 1}. Posição: "${d.positionInfo.title}" -> Carta: ${d.card.name} (${orientation}) - Palavras-chave: ${d.card.keywords.join(", ")}`;
+        }).join("\n");
+
+        const prompt = `Você é um sábio oraculista e mestre de Tarot com vasta sabedoria hermética, psicológica (junguiana) e mística.
+O consulente realizou uma tiragem de Tarot com as seguintes características:
+
+- Tipo de Tiragem: ${spreadName}
+- Intenção / Pergunta do Consulente: "${question || "Consulta oracular geral de autoconhecimento e orientação de destino"}"
+- Cartas reveladas na mesa:
+${cardsDescription}
+
+Por favor, elabore uma leitura interpretativa rica, profunda, acolhedora e inspiradora:
+1. Responda diretamente à intenção do consulente conectando os ensinamentos dessas cartas.
+2. Analise como as energias das cartas dialogam e se influenciam mutuamente.
+3. Entregue um conselho prático e oracular de síntese para o consulente seguir.
+
+Seja poético, profundo e claro, usando formatação limpa e parágrafos bem espaçados.`;
+
+        try {
+            const response = await fetch(
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-goog-api-key": apiKey
+                    },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (text) return text;
+            }
+        } catch (err) {
+            console.warn("Usando síntese oracular integrada:", err);
+        }
+    }
+
+    // Simula breve tempo de sintonização mística para experiência fluida
+    await new Promise(r => setTimeout(r, 650));
+    return generateLocalMysticOracleSynthesis(question, spreadName, cards);
+}
+
+function generateLocalMysticOracleSynthesis(question, spreadName, drawnCards) {
+    const majorCount = drawnCards.filter(d => d.card.category === "major").length;
+    const reversedCount = drawnCards.filter(d => d.isReversed).length;
+
+    let depth = "";
+    if (majorCount >= Math.ceil(drawnCards.length / 2)) {
+        depth = "Há uma forte presença de Arcanos Maiores nesta mesa, indicando forças arquetípicas profundas do destino e lições espirituais de grande relevância no seu momento atual.";
+    } else {
+        depth = "A tiragem é guiada pelas energias práticas dos Arcanos Menores, revelando que a chave da transformação reside em suas escolhas diárias, atitudes conscientes e na maneira como você conduz suas relações e projetos.";
+    }
+
+    let flow = "";
+    if (reversedCount > 0) {
+        flow = `Com ${reversedCount} ${reversedCount === 1 ? "carta invertida" : "cartas invertidas"}, o oráculo sinaliza processos internos de amadurecimento ou bloqueios sutis que pedem introspecção e cautela antes de agir impulsivamente.`;
+    } else {
+        flow = "Todas as energias fluem de forma direta e aberta (eretas), trazendo clareza, impulso favorável e caminhos desimpedidos para suas decisões.";
+    }
+
+    const cardSummaries = drawnCards.map(d => {
+        const meaning = d.isReversed ? d.card.reversed : d.card.upright;
+        const status = d.isReversed ? "Invertida 🔄" : "Ereta ✨";
+        return `• ${d.positionInfo.title} — ${d.card.name} (${status}):\n  Palavras-chave: ${d.card.keywords.join(", ")}.\n  Mensagem: ${meaning}`;
+    }).join("\n\n");
+
+    const firstCard = drawnCards[0];
+    const lastCard = drawnCards[drawnCards.length - 1];
+    let dialogue = "";
+    if (drawnCards.length > 1) {
+        dialogue = `\n🔗 DIÁLOGO ENTRE OS ARCANOS:\nA jornada desta leitura inicia sob a vibração de ${firstCard.card.name} (${firstCard.positionInfo.title}) e converge para ${lastCard.card.name} (${lastCard.positionInfo.title}). Isso demonstra que, ao integrar o aprendizado de "${firstCard.card.keywords[0]}", você abre espaço para manifestar "${lastCard.card.keywords[0]}" com sabedoria e consciência.\n`;
+    }
+
+    return `🔮 SÍNTESE ORACULAR DA TIRAGEM (${spreadName.toUpperCase()})
+
+${question ? `💭 Intenção Consultada: "${question}"\n\n` : ""}🌟 PANORAMA ENERGÉTICO:
+${depth}
+${flow}
+
+📜 INTERPRETAÇÃO INTEGRADA DAS POSIÇÕES:
+${cardSummaries}
+${dialogue}
+✨ CONSELHO FINAL DO ORÁCULO:
+Confie na sabedoria das sincronicidades. As cartas mostram que você possui os recursos internos necessários para atravessar este ciclo. Acolha a intuição desperta por esta leitura e alinhe sua vontade com ações serenas e conscientes.`;
 }
 
 function getYesNoVerdict(drawn) {

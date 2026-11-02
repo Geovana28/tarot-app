@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=9">
+    <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
     <div class="stars-bg"></div>
@@ -90,6 +90,9 @@
                     <button id="btn-reveal-all" class="btn btn-secondary" disabled>
                         <span class="btn-icon">👁️</span> Revelar Todas
                     </button>
+                    <button id="btn-consult-ai-toolbar" class="btn btn-ai-toolbar" disabled>
+                        <span class="btn-icon">🔮</span> Oráculo IA
+                    </button>
                 </div>
             </div>
 
@@ -112,6 +115,14 @@
                 
                 <div id="cards-container" class="cards-container spread-three">
                     <!-- Cartas inseridas dinamicamente via JS -->
+                </div>
+
+                <!-- Botão Principal de Interpretação com IA Oracular -->
+                <div id="ai-oracle-cta-wrapper" class="ai-oracle-cta-wrapper hidden">
+                    <button id="btn-consult-ai-main" class="btn-ai-oracle-main">
+                        <span class="ai-btn-title">✨ Interpretar com IA Oracular ✨</span>
+                        <span class="ai-btn-subtitle">Análise profunda, integrada e holística de todas as cartas da mesa</span>
+                    </button>
                 </div>
             </div>
 
@@ -226,13 +237,52 @@
         </div>
     </div>
 
+    <!-- MODAL DO ORÁCULO DE IA -->
+    <div id="ai-modal" class="modal hidden">
+        <div class="modal-overlay" id="ai-modal-overlay"></div>
+        <div class="modal-content ai-modal-content glass-panel">
+            <div class="ai-modal-header">
+                <h3>✨ Oráculo de IA — Interpretação Profunda</h3>
+                <button class="modal-close" id="btn-close-ai-modal">&times;</button>
+            </div>
+
+            <div class="ai-key-config">
+                <details>
+                    <summary>🔑 Configurar Chave Google Gemini (Opcional — usa Oráculo Místico Integrado por padrão)</summary>
+                    <div class="ai-key-input-row">
+                        <input type="password" id="gemini-api-key-input" class="custom-input" placeholder="Cole sua chave API Gemini (AIzaSy...) opcionalmente">
+                        <button id="btn-save-api-key" class="btn btn-secondary btn-sm">Salvar Chave</button>
+                    </div>
+                </details>
+            </div>
+
+            <div id="ai-loading-box" class="ai-loading-box hidden">
+                <div class="ai-spinner">🔮</div>
+                <p class="ai-loading-title">Conectando as energias dos arcanos...</p>
+                <p class="ai-loading-sub">Interpretando a sincronicidade da sua pergunta e das cartas reveladas</p>
+            </div>
+
+            <div id="ai-response-container" class="ai-response-container">
+                <div id="ai-reading-text" class="ai-reading-text"></div>
+                <div class="ai-modal-actions">
+                    <button id="btn-copy-ai-reading" class="btn btn-secondary">
+                        <span class="btn-icon">📋</span> Copiar Interpretação
+                    </button>
+                    <button id="btn-save-ai-journal" class="btn btn-primary">
+                        <span class="btn-icon">💾</span> Salvar Leitura Completa no Diário
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- TOAST NOTIFICATIONS -->
     <div id="toast-container" class="toast-container"></div>
 
     <footer class="app-footer">
-        <p>Tarot Místico &bull; Oráculo Local &bull; Funciona 100% Offline &bull; Dados salvos no seu navegador</p>
+        <p>Tarot Místico &bull; Oráculo Interativo com IA &bull; Dados salvos no seu navegador</p>
     </footer>
 
-    <script src="script.js?v=9"></script>
+    <script src="script.js?v=10"></script>
 </body>
 </html>
