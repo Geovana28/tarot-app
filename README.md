@@ -2,6 +2,8 @@
 
 Um oráculo interativo completo de Tarot com as **78 cartas (Arcanos Maiores e Menores)**, múltiplos métodos de tiragem, síntese holística/IA, glossário ilustrado e diário pessoal de leituras.
 
+🌐 **Acesse a versão online (GitHub Pages):** [**https://geovana28.github.io/tarot-app/**](https://geovana28.github.io/tarot-app/)
+
 ---
 
 ## ✨ Funcionalidades Principais
@@ -36,7 +38,8 @@ Um oráculo interativo completo de Tarot com as **78 cartas (Arcanos Maiores e M
 ## 🚀 Como Executar
 
 ### 🌐 Versão Web
-Basta abrir o arquivo `index.html` diretamente em qualquer navegador moderno (funciona 100% offline).
+- **Online:** Acesse direto pelo navegador em [https://geovana28.github.io/tarot-app/](https://geovana28.github.io/tarot-app/)
+- **Local:** Basta abrir o arquivo `index.html` diretamente em qualquer navegador moderno (funciona 100% offline).
 
 ### 📱 Versão Mobile (React Native / Expo)
 1. Acesse a pasta do aplicativo e instale as dependências:
@@ -54,3 +57,4 @@ Basta abrir o arquivo `index.html` diretamente em qualquer navegador moderno (fu
    npx expo start
    ```
    *(Consulte [`tarot-app/README.md`](./tarot-app/README.md) para instruções de como gerar o arquivo `.apk` via EAS Build).*
+
