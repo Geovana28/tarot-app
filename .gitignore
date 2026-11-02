@@ -1,0 +1,33 @@
+# Dependências Node / Expo
+node_modules/
+**/node_modules/
+
+# Expo
+.expo/
+**/.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Variáveis de ambiente e segredos
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Sistema Operacional / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*

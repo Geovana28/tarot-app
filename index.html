@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="violet">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarot Místico - Oráculo, Diário & Guia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=9">
+</head>
+<body>
+    <div class="stars-bg"></div>
+    <div class="twinkle-bg"></div>
+
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <span class="symbol">🔮</span>
+                <div class="brand-text">
+                    <h1 class="title">Tarot Místico</h1>
+                    <span class="subtitle">Oráculo Interativo & Diário Pessoal</span>
+                </div>
+            </div>
+            
+            <nav class="nav-tabs">
+                <button class="tab-btn active" data-tab="mesa">
+                    <span class="tab-icon">🃏</span> Mesa de Tiragem
+                </button>
+                <button class="tab-btn" data-tab="diario">
+                    <span class="tab-icon">📖</span> Meu Diário
+                </button>
+                <button class="tab-btn" data-tab="glossario">
+                    <span class="tab-icon">📜</span> Glossário
+                </button>
+            </nav>
+
+            <div class="header-controls">
+                <div class="theme-selector-wrapper" title="Alternar Tema Visual">
+                    <span class="control-icon">🎨</span>
+                    <select id="theme-select" class="theme-select">
+                        <option value="violet">💜 Místico Violeta</option>
+                        <option value="cosmic">🌑 Escuridão Cósmica</option>
+                        <option value="solar">☀️ Dourado Solar</option>
+                    </select>
+                </div>
+                <button id="btn-sound-toggle" class="icon-btn" title="Ativar/Desativar Efeitos Sonoros">
+                    <span id="sound-icon">🔊</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-content">
+        <!-- ABA 1: MESA DE TIRAGEM -->
+        <section id="tab-mesa" class="tab-content active">
+            <div class="toolbar glass-panel">
+                <div class="tool-group">
+                    <label for="spread-select" class="tool-label">Tipo de Tiragem:</label>
+                    <select id="spread-select" class="custom-select">
+                        <option value="daily">☀️ Carta do Dia (1 Carta)</option>
+                        <option value="three" selected>⏳ Passado, Presente e Futuro (3 Cartas)</option>
+                        <option value="love">💖 Tiragem do Amor (3 Cartas)</option>
+                        <option value="decision">🧭 Tiragem de Decisão (4 Cartas)</option>
+                        <option value="celtic">🔮 Cruz Celta (10 Cartas)</option>
+                        <option value="yesno">⚖️ Sim ou Não (1 Carta)</option>
+                    </select>
+                </div>
+
+                <div class="tool-group question-group">
+                    <label for="question-input" class="tool-label">Pergunta / Intenção do Dia:</label>
+                    <div class="input-with-icon">
+                        <span class="input-icon">💭</span>
+                        <input type="text" id="question-input" class="custom-input" placeholder="Sobre o que você quer perguntar hoje? (opcional)">
+                    </div>
+                </div>
+
+                <div class="tool-group checkbox-group">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" id="allow-reversed" checked>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">Permitir Invertidas</span>
+                    </label>
+                </div>
+
+                <div class="tool-actions">
+                    <button id="btn-draw" class="btn btn-primary">
+                        <span class="btn-icon">✨</span> Embaralhar e Tirar
+                    </button>
+                    <button id="btn-reveal-all" class="btn btn-secondary" disabled>
+                        <span class="btn-icon">👁️</span> Revelar Todas
+                    </button>
+                </div>
+            </div>
+
+            <!-- Banner de Pergunta em Destaque -->
+            <div id="question-banner" class="question-banner glass-panel hidden">
+                <div class="question-banner-content">
+                    <span class="question-icon">🔮</span>
+                    <div class="question-text-wrapper">
+                        <span class="question-label">Intenção da Leitura:</span>
+                        <h3 id="question-banner-text" class="question-text"></h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Área Visual das Cartas -->
+            <div id="reading-desk" class="reading-desk">
+                <div class="desk-instruction" id="desk-instruction">
+                    <p>Digite sua pergunta acima (opcional) e clique em <strong>"Embaralhar e Tirar"</strong> para iniciar sua consulta oracular.</p>
+                </div>
+                
+                <div id="cards-container" class="cards-container spread-three">
+                    <!-- Cartas inseridas dinamicamente via JS -->
+                </div>
+            </div>
+
+            <!-- Painel de Leitura & Interpretação -->
+            <div id="reading-panel" class="reading-panel glass-panel hidden">
+                <div class="panel-header">
+                    <div class="panel-title-area">
+                        <h2><span class="icon">✨</span> Interpretação da Tiragem</h2>
+                        <p class="panel-subtitle">Clique em qualquer carta na mesa ou nas abas abaixo para detalhar.</p>
+                    </div>
+                    <div class="panel-actions">
+                        <button id="btn-copy-summary" class="btn btn-secondary btn-sm" title="Copiar resumo formatado">
+                            <span class="btn-icon">📋</span> Copiar Resumo
+                        </button>
+                        <button id="btn-save-journal" class="btn btn-primary btn-sm" title="Salvar no Diário Pessoal">
+                            <span class="btn-icon">💾</span> Salvar no Diário
+                        </button>
+                    </div>
+                </div>
+
+                <div id="reading-cards-tabs" class="reading-cards-tabs">
+                    <!-- Abas rápidas para alternar entre as cartas da tiragem -->
+                </div>
+
+                <div id="active-card-details" class="card-reading-detail">
+                    <!-- Detalhes da carta selecionada -->
+                </div>
+
+                <!-- Painel de Síntese Holística & Harmonia da Tiragem -->
+                <div id="holistic-synthesis" class="holistic-synthesis-box">
+                    <!-- Renderizado dinamicamente via JS quando todas as cartas forem reveladas -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 2: DIÁRIO DE TAROT & HISTÓRICO -->
+        <section id="tab-diario" class="tab-content">
+            <div class="journal-header glass-panel">
+                <div class="journal-title-box">
+                    <h2>📖 Diário de Tarot & Histórico</h2>
+                    <p>Consulte suas leituras anteriores, adicione percepções e veja como o oráculo se manifestou no seu dia a dia.</p>
+                </div>
+                <div class="journal-filter-box">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="journal-search" placeholder="Buscar no diário por carta, pergunta ou anotação...">
+                        <button id="btn-clear-journal-search" class="btn-clear hidden">&times;</button>
+                    </div>
+                    <button id="btn-export-journal" class="btn btn-secondary btn-sm" title="Copiar todo o diário como texto">
+                        <span class="btn-icon">📥</span> Exportar Diário
+                    </button>
+                    <button id="btn-clear-journal" class="btn btn-danger-outline btn-sm" title="Limpar todo o histórico">
+                        <span class="btn-icon">🗑️</span> Limpar Histórico
+                    </button>
+                </div>
+            </div>
+
+            <!-- Widget de Offensiva & Calendário Místico -->
+            <div id="journal-streak-widget" class="journal-streak-panel glass-panel">
+                <!-- Renderizado via JS -->
+            </div>
+
+            <div id="journal-list" class="journal-list">
+                <!-- Registros do diário gerados dinamicamente via JS -->
+            </div>
+        </section>
+
+        <!-- ABA 3: GLOSSÁRIO DE CARTAS -->
+        <section id="tab-glossario" class="tab-content">
+            <div class="glossary-header glass-panel">
+                <div class="search-box-row">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="glossary-search" placeholder="Buscar por nome da carta, significado ou palavras-chave...">
+                        <button id="btn-clear-search" class="btn-clear hidden">&times;</button>
+                    </div>
+
+                    <div class="quick-topics">
+                        <span class="topics-label">Temas:</span>
+                        <button class="topic-pill" data-topic="amor">💖 Amor</button>
+                        <button class="topic-pill" data-topic="trabalho">💼 Trabalho</button>
+                        <button class="topic-pill" data-topic="dinheiro">💰 Dinheiro</button>
+                        <button class="topic-pill" data-topic="saúde">🌿 Saúde</button>
+                        <button class="topic-pill" data-topic="espiritualidade">✨ Espiritualidade</button>
+                    </div>
+                </div>
+
+                <div class="filter-tabs">
+                    <button class="filter-btn active" data-category="all">Todas (78)</button>
+                    <button class="filter-btn" data-category="major">Arcanos Maiores (22)</button>
+                    <button class="filter-btn" data-category="wands">Paus ♣</button>
+                    <button class="filter-btn" data-category="cups">Copas ♥</button>
+                    <button class="filter-btn" data-category="swords">Espadas ♠</button>
+                    <button class="filter-btn" data-category="pentacles">Ouros ♦</button>
+                </div>
+            </div>
+
+            <div id="glossary-grid" class="glossary-grid">
+                <!-- Cartas do glossário inseridas via JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL DE DETALHES DA CARTA (GLOSSÁRIO & DIÁRIO) -->
+    <div id="card-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content glass-panel">
+            <button class="modal-close" id="btn-close-modal">&times;</button>
+            <div id="modal-body" class="modal-body">
+                <!-- Conteúdo renderizado via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <footer class="app-footer">
+        <p>Tarot Místico &bull; Oráculo Local &bull; Funciona 100% Offline &bull; Dados salvos no seu navegador</p>
+    </footer>
+
+    <script src="script.js?v=9"></script>
+</body>
+</html>

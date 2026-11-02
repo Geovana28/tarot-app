@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Tarot Místico",
+    "slug": "tarot-mistico",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0b0518"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.tarotmistico.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0b0518"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-status-bar"
+    ]
+  }
+}
